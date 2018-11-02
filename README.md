@@ -14,7 +14,7 @@ Guia de instalação: https://elk-docker.readthedocs.io/#installation
 ## Instalando
 
 ```sh
-$ yarn add github:squidit/sq-winston
+$ npm install github:squidit/sq-winston
 ```
 
 ## Utilização
