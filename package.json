@@ -1,0 +1,20 @@
+{
+  "name": "sq-winston",
+  "version": "0.0.1",
+  "description": "Lib de log focada em Elasticsearch + Kibana",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Breno Panzolini <breno.panzolini@squidit.com.br>",
+  "license": "ISC",
+  "dependencies": {
+    "elasticsearch": "^15.1.1",
+    "lodash": "^4.17.11",
+    "moment": "^2.22.2",
+    "shortid": "^2.2.13",
+    "winston": "^3.1.0",
+    "winston-elasticsearch": "^0.7.5"
+  }
+}
