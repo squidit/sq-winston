@@ -1,6 +1,9 @@
 const { createLogger } = require('winston')
-
+const { mapStep } = require('../utils/map-step')
+const { mapRequest } = require('sq-winston/src/utils/map-request-hapi')
 const elasticTransport = require('./transports/elastic.transport')
+
+const key = 'sq-traceId'
 
 /**
  * Retorna todos os transporter que serão utilizados pelo Winston
@@ -29,6 +32,13 @@ class Logger {
   }
   static info (message, meta = {}) {
     logger.log('info', message, meta)
+  }
+  static step (message, stepInfo = {}, request = {}) {
+    let metaStep = mapStep(stepInfo)
+    let metaRequest = {}
+    if (Object.keys(request).length > 0) metaRequest = mapRequest(request, key)
+    const meta = { ...metaStep, ...metaRequest }
+    logger.log(metaStep.type, message, meta)
   }
 }
 

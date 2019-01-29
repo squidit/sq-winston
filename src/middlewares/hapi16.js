@@ -1,6 +1,7 @@
 const shortid = require('shortid')
-const moment = require('moment')
 const Logger = require('../logger')
+const moment = require('moment')
+const { mapRequest } = require('sq-winston/src/utils/map-request-hapi')
 
 const key = 'sq-traceId'
 
@@ -10,27 +11,14 @@ const plugin = function (server, options, next) {
     if (!request.headers[key]) request.headers[key] = shortid.generate()
 
     // Adiciona no context do request um objeto com as propriedades para log
-    request.meta = {
-      traceId: request.headers[key],
-      method: request.method,
-      url: {
-        href: request.url.href,
-        path: request.url.path,
-        query: request.url.query,
-        params: request.params
-      },
-      payload: request.payload,
-      begin: moment.utc()
-    }
+    request.meta = mapRequest(request, key)
+    request.meta.begin = moment.utc()
 
     return reply.continue()
   })
 
   server.ext('onPostAuth', (request, reply) => {
-    request.meta.authentication = {
-      strategy: request.auth.strategy,
-      credentials: request.auth.credentials
-    }
+    request.meta = mapRequest(request, key, request.meta)
 
     return reply.continue()
   })
@@ -56,6 +44,7 @@ const plugin = function (server, options, next) {
       logFn = Logger.error
       meta.status = request.response.output.statusCode
       meta.error = request.response.message
+      meta.stack = request.response.stack
     } else {
       logFn = Logger.info
       meta.status = request.response.statusCode

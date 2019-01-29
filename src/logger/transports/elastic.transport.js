@@ -2,11 +2,12 @@ const path = require('path')
 const WinstonES = require('winston-elasticsearch')
 const elasticsearch = require('elasticsearch')
 const moment = require('moment')
+const { stringifyFields } = require('../../utils/map-request-hapi')
 const { get, omit } = require('lodash')
-const { ELASTIC_LOG_URL } = process.env
+const { ELASTIC_LOG_URL, NODE_ENV } = process.env
 
 const transformer = (log) => {
-  const meta = log.meta || {}
+  const meta = stringifyFields(log.meta || {})
   const type = get(meta, 'type', 'custom')
   const traceId = get(meta, 'traceId')
 
@@ -18,7 +19,7 @@ const transformer = (log) => {
     severity: log.level,
     name: packageJson.name || 'NA',
     version: packageJson.version || 'NA',
-    environment: process.env.NODE_ENV,
+    environment: NODE_ENV,
     type,
     traceId,
     fields: omit(meta, ['type', 'traceId'])
