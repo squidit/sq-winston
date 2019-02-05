@@ -1,3 +1,5 @@
+const { get } = require('lodash')
+
 function mapStep (object) {
   const meta = {
     step: JSON.stringify(object),
@@ -5,7 +7,7 @@ function mapStep (object) {
   }
   if (object instanceof Error) {
     meta.error = object.message
-    meta.status = object.statusCode || (object.output ? object.output.statusCode : null)
+    meta.status = object.statusCode || get(object.output, 'statusCode', null)
     meta.type = 'error'
   }
   if (object.stack) {

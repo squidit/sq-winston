@@ -1,3 +1,5 @@
+const { get } = require('lodash')
+
 function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
   return ({
     traceId: meta.traceId || request.headers[key],
@@ -10,11 +12,11 @@ function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
     },
     payload: meta.payload || request.payload,
     authentication: {
-      strategy: meta.authentication.strategy || (request.auth ? request.auth.strategy : null),
-      email: meta.authentication.email || (request.auth && request.auth.credentials ? request.auth.credentials.email : null),
-      squidId: meta.authentication.squidId || (request.auth && request.auth.credentials ? request.auth.credentials.squidId : null),
-      sub: meta.authentication.sub || (request.auth && request.auth.credentials ? request.auth.credentials.sub : null),
-      credentials: meta.authentication.credentials || (request.auth ? request.auth.credentials : null)
+      strategy: meta.authentication.strategy || get(request.auth, 'strategy', null),
+      email: meta.authentication.email || get(request.auth, 'credentials.email', null),
+      squidId: meta.authentication.squidId || get(request.auth, 'credentials.squidId', null),
+      sub: meta.authentication.sub || get(request.auth, 'credentials.sub', null),
+      credentials: meta.authentication.credentials || get(request.auth, 'credentials', null)
     }
   })
 }
@@ -22,6 +24,7 @@ function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
 function stringifyFields (meta) {
   if (meta.url) {
     if (meta.url.query) meta.url.query = JSON.stringify(meta.url.query)
+    if (meta.url.payload) meta.url.payload = JSON.stringify(meta.url.payload)
     if (meta.url.params) meta.url.params = JSON.stringify(meta.url.params)
   }
   if (meta.authentication) meta.authentication.credentials = JSON.stringify(meta.authentication.credentials)

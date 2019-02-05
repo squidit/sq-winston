@@ -1,6 +1,8 @@
 const { createLogger } = require('winston')
 const { mapStep } = require('../utils/map-step')
 const { mapRequest } = require('sq-winston/src/utils/map-request-hapi')
+const { get } = require('lodash')
+const shortid = require('shortid')
 const elasticTransport = require('./transports/elastic.transport')
 
 const key = 'sq-traceId'
@@ -33,12 +35,15 @@ class Logger {
   static info (message, meta = {}) {
     logger.log('info', message, meta)
   }
-  static step (message, stepInfo = {}, request = {}) {
+  static step (message, stepInfo = {}, options = {}) {
+    const request = options.request || {}
     let metaStep = mapStep(stepInfo)
     let metaRequest = {}
     if (Object.keys(request).length > 0) metaRequest = mapRequest(request, key)
-    const meta = { ...metaStep, ...metaRequest }
+    const meta = { ...metaStep, ...metaRequest, options }
+    if (meta.traceId) meta.traceId = shortid.generate()
     logger.log(metaStep.type, message, meta)
+    return meta.traceId
   }
 }
 
