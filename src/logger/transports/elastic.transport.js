@@ -8,9 +8,9 @@ const { ELASTIC_LOG_URL, NODE_ENV } = process.env
 
 function getOptions (meta) {
   return ({
-    type: meta.options.type,
-    name: meta.options.name,
-    version: meta.options.version
+    type: get(meta, 'options.type'),
+    name: get(meta, 'options.name'),
+    version: get(meta, 'options.version')
   })
 }
 

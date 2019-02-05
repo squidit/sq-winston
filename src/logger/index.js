@@ -1,7 +1,6 @@
 const { createLogger } = require('winston')
 const { mapStep } = require('../utils/map-step')
 const { mapRequest } = require('sq-winston/src/utils/map-request-hapi')
-const { get } = require('lodash')
 const shortid = require('shortid')
 const elasticTransport = require('./transports/elastic.transport')
 
