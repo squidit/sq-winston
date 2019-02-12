@@ -24,8 +24,8 @@ function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
 function stringifyFields (meta) {
   if (meta.url) {
     if (meta.url.query) meta.url.query = JSON.stringify(meta.url.query)
-    if (meta.url.payload) meta.url.payload = JSON.stringify(meta.url.payload)
     if (meta.url.params) meta.url.params = JSON.stringify(meta.url.params)
+    if (meta.payload) meta.payload = JSON.stringify(meta.payload)
   }
   if (meta.authentication) meta.authentication.credentials = JSON.stringify(meta.authentication.credentials)
   return meta
