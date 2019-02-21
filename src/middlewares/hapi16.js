@@ -40,9 +40,12 @@ const plugin = function (server, options, next) {
 
     // Verifica se ocorreu erro no request para adicionar os respctivos metas
     let logFn = null
-    if (request.response instanceof Error) {
+    if (request.response instanceof Error ||
+      !!request.response.stack ||
+      (request.response.output && request.response.output.statusCode >= 400) ||
+      request.response.statusCode >= 400) {
       logFn = Logger.error
-      meta.status = request.response.output.statusCode
+      meta.status = request.response.output.statusCode || request.response.statusCode
       meta.error = request.response.message
       meta.stack = request.response.stack
     } else {
