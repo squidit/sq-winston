@@ -40,17 +40,17 @@ const plugin = function (server, options, next) {
 
     // Verifica se ocorreu erro no request para adicionar os respctivos metas
     let logFn = null
+    meta.status = request.response.statusCode
+      ? request.response.statusCode
+      : (request.response.output ? request.response.output.statusCode : 599)
     if (request.response instanceof Error ||
       !!request.response.stack ||
-      (request.response.output && request.response.output.statusCode >= 400) ||
-      request.response.statusCode >= 400) {
+      meta.status >= 400) {
       logFn = Logger.error
-      meta.status = request.response.output.statusCode || request.response.statusCode
       meta.error = request.response.message
       meta.stack = request.response.stack
     } else {
       logFn = Logger.info
-      meta.status = request.response.statusCode
     }
 
     // Cria de fato o registro de log
