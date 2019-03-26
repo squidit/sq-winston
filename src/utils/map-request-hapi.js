@@ -1,12 +1,15 @@
 const { get } = require('lodash')
 
 function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
+  const path = meta.url.path || request.url.path
+  const pathname = path ? path.split('?')[0] : null
   return ({
     traceId: meta.traceId || request.headers[key],
     method: meta.method || request.method,
     url: {
       href: meta.url.href || request.url.href,
-      path: meta.url.path || request.url.path,
+      path: path,
+      pathname: pathname,
       query: meta.url.query || (Object.keys(request.url.query).length > 0 ? request.url.query : null),
       params: meta.url.params || (Object.keys(request.params).length > 0 ? request.params : null)
     },
