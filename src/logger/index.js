@@ -36,6 +36,7 @@ class Logger {
   }
   static step (message, stepInfo = {}, options = {}) {
     const request = options.request || {}
+    delete options.request
     let metaStep = mapStep(stepInfo)
     let metaRequest = {}
     if (Object.keys(request).length > 0) metaRequest = mapRequest(request, key)
