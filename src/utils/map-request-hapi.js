@@ -14,6 +14,7 @@ function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
       params: meta.url.params || (Object.keys(request.params).length > 0 ? request.params : null)
     },
     payload: meta.payload || request.payload,
+    community: request.headers['x-sq-community'] ? request.headers['x-sq-community'] : null,
     authentication: {
       strategy: meta.authentication.strategy || get(request.auth, 'strategy', null),
       email: meta.authentication.email || get(request.auth, 'credentials.email', null),
