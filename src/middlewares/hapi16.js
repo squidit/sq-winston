@@ -47,8 +47,12 @@ const plugin = function (server, options, next) {
       !!request.response.stack ||
       meta.status >= 400) {
       logFn = Logger.error
-      meta.error = request.response.message
-      meta.stack = request.response.stack
+      meta.error = typeof request.response.message === 'string'
+        ? request.response.message
+        : request.response.source ? JSON.stringify(request.response.source) : 'No message available'
+      meta.stack = typeof request.response.stack === 'string'
+        ? request.response.stack
+        : (request.response.source && request.response.source.stack ? request.response.source.stack : 'No stack available')
     } else {
       logFn = Logger.info
     }

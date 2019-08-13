@@ -10,12 +10,13 @@ function getOptions (meta) {
   return ({
     type: get(meta, 'options.type'),
     name: get(meta, 'options.name'),
-    version: get(meta, 'options.version')
+    version: get(meta, 'options.version'),
+    environment: get(meta, 'options.environment')
   })
 }
 
 const transformer = (log) => {
-  const { type, name, version } = getOptions(log.meta)
+  const { type, name, version, environment } = getOptions(log.meta)
 
   const meta = stringifyFields(omit(log.meta, ['options']) || {})
   const typelog = type || get(meta, 'type', 'custom')
@@ -29,7 +30,7 @@ const transformer = (log) => {
     severity: log.level,
     name: name || packageJson.name || 'NA',
     version: version || packageJson.version || 'NA',
-    environment: NODE_ENV,
+    environment: environment || NODE_ENV,
     type: typelog,
     traceId,
     fields: omit(meta, ['type', 'traceId'])
