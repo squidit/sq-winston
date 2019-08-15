@@ -26,3 +26,61 @@ ELASTIC_LOG_URL=http://localhost:9200
 ```
 
 Caso não exista essa variável de ambiente, a lib não irá realizar nenhum log
+
+### Middlewares
+
+#### Logs de *Requests*
+Para habilitar logs de *requests* (para **Hapi 16** e **Hapi 17**) segue a implementação:
+
+- **Hapi 16:**
+
+No *register* de *plugins*:
+
+```
+const sqWinston = require('sq-winston')
+
+const registers = [
+    hapiAuthJWT,
+    swagger,
+    inert,
+    vision,
+    swaggerUI,
+    sqWinston.middlewares.hapi16
+  ]
+```
+- **Hapi 17:**
+
+No *register* de *plugins*:
+
+```
+const sqWinston = require('sq-winston')
+
+const registers = [
+    hapiAuthJWT,
+    swagger,
+    inert,
+    vision,
+    swaggerUI,
+    sqWinston.middlewares.hapi17,
+  ]
+```
+
+#### Logs de *Steps*
+Para habilitar logs de *steps* segue a implementação:
+
+No arquivo a fazer o *log*:
+
+```
+const sqWinston = require('sq-winston')
+
+let message = '' // [[String com a mensagem a ser logada]]
+const options = { } // [[Objeto com os parâmetros do *log*]]
+                    // type: String - Tipo do log. 'http', 'info' (Default), 'warn', 'error
+                    // name: String - Nome do projeto - Default: Nome no package.json
+                    // version: String - Versão do projeto - Default: Versão no package.json
+                    // environment: String - Ambiente do projeto - Default: Variável NODE_ENV
+                    // request: Objeto - Objeto da request que vem do handler - Opcional
+
+const data = { } // [[Objeto com os qualquer dado a ser stringficado]]
+const traceId = logger.step(message, data, options) // a resposta do logger devolve uma hash de rastreamento
+```
