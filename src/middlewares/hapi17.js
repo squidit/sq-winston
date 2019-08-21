@@ -55,6 +55,9 @@ const plugin = {
       meta.stack = typeof request.response.stack === 'string'
         ? request.response.stack
         : (request.response.source && request.response.source.stack ? request.response.source.stack : 'No stack available')
+      meta.details = typeof request.response.details === 'string'
+        ? request.response.details
+        : request.response.details ? JSON.stringify(request.response.details) : 'No message available'
     } else {
       logFn = Logger.info
     }
