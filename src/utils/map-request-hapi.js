@@ -1,4 +1,5 @@
-const { get } = require('lodash')
+const { set, get } = require('lodash')
+const { PROTECTED_FIELDS } = process.env
 
 function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
   const path = meta.url.path || request.url.path
@@ -35,7 +36,18 @@ function stringifyFields (meta) {
   return meta
 }
 
+function hideProtectedField (meta) {
+  const protectedFields = PROTECTED_FIELDS.split(',')
+  for (const field of protectedFields) {
+    if (field && get(meta, field)) {
+      set(meta, field, '********')
+    }
+  }
+  return meta
+}
+
 module.exports = {
   mapRequest,
-  stringifyFields
+  stringifyFields,
+  hideProtectedField
 }
