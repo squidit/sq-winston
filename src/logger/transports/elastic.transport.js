@@ -18,7 +18,7 @@ function getOptions (meta) {
 const transformer = (log) => {
   const { type, name, version, environment } = getOptions(log.meta)
 
-  const meta = stringifyFields(hideProtectedField(omit(log.meta, ['options'])) || {})
+  const meta = stringifyFields(hideProtectedField(omit(log.meta, ['options', 'begin'])) || {})
   const typelog = type || get(meta, 'type', 'custom')
   const traceId = get(meta, 'traceId')
 
