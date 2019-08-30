@@ -37,7 +37,7 @@ function stringifyFields (meta) {
 }
 
 function hideProtectedField (meta) {
-  const protectedFields = PROTECTED_FIELDS.split(',')
+  const protectedFields = PROTECTED_FIELDS ? PROTECTED_FIELDS.split(',') : null
   for (const field of protectedFields) {
     if (field && get(meta, field)) {
       set(meta, field, '********')
