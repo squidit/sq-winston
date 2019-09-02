@@ -15,6 +15,7 @@ function mapStep (object) {
     meta.type = 'error'
   }
   if (object.statusCode) meta.status = object.statusCode
+  if (object.uid) meta.uid = object.uid
   return meta
 }
 
