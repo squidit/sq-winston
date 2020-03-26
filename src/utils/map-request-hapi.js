@@ -2,7 +2,7 @@ const { set, get } = require('lodash')
 const { PROTECTED_FIELDS } = process.env
 
 function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
-  const path = get(meta, 'url.path', get(request, 'url.path', '-'))
+  const path = meta.url.path || get(request, 'url.path', null)
   const pathname = path ? path.split('?')[0] : null
   return ({
     traceId: meta.traceId || request.headers[key],
