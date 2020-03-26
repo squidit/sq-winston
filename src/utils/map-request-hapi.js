@@ -5,7 +5,7 @@ function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
   const path = meta.url.path || get(request, 'url.path', null)
   const pathname = path ? path.split('?')[0] : null
   return ({
-    traceId: meta.traceId || (request.headers[key] ? request.headers[key] : null),
+    traceId: meta.traceId || (request.headers ? request.headers[key] : null),
     begin: meta.begin,
     method: meta.method || request.method,
     url: {
