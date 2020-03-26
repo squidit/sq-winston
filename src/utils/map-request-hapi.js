@@ -9,14 +9,14 @@ function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
     begin: meta.begin,
     method: meta.method || request.method,
     url: {
-      href: meta.url.href || request.url.href,
+      href: meta.url.href || get(request, 'url.href', null),
       path: path,
       pathname: pathname,
-      query: meta.url.query || (request.url.query && Object.keys(request.url.query).length > 0 ? request.url.query : null),
+      query: meta.url.query || (request.url && request.url.query && Object.keys(request.url.query).length > 0 ? request.url.query : null),
       params: meta.url.params || (request.params && Object.keys(request.params).length > 0 ? request.params : null)
     },
     payload: meta.payload || request.payload,
-    community: request.headers['x-sq-community'] ? request.headers['x-sq-community'] : null,
+    community: request.headers && request.headers['x-sq-community'] ? request.headers['x-sq-community'] : null,
     authentication: {
       strategy: meta.authentication.strategy || get(request.auth, 'strategy', null),
       email: meta.authentication.email || get(request.auth, 'credentials.email', null),
