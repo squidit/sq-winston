@@ -56,4 +56,15 @@ const elasticTransport = ELASTIC_LOG_URL
   })
   : null
 
-module.exports = elasticTransport
+const elasticTransportImpersonate = ELASTIC_LOG_URL
+  ? new WinstonES({
+    client: new elasticsearch.Client(getESOptions()),
+    transformer,
+    indexPrefix: 'impersonate'
+  })
+  : null
+
+module.exports = {
+  elasticTransport,
+  elasticTransportImpersonate
+}

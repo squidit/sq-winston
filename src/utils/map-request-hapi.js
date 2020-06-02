@@ -22,7 +22,8 @@ function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
       email: meta.authentication.email || get(request.auth, 'credentials.email', null),
       squidId: meta.authentication.squidId || get(request.auth, 'credentials.squidId', null),
       sub: meta.authentication.sub || get(request.auth, 'credentials.sub', null),
-      credentials: meta.authentication.credentials || get(request.auth, 'credentials', null)
+      credentials: meta.authentication.credentials || get(request.auth, 'credentials', null),
+      impersonate: get(request.auth, 'credentials.impersonate', null)
     }
   })
 }
