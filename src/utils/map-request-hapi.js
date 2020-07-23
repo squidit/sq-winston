@@ -32,7 +32,16 @@ function stringifyFields (meta) {
   if (meta.url) {
     if (meta.url.query) meta.url.query = JSON.stringify(meta.url.query)
     if (meta.url.params) meta.url.params = JSON.stringify(meta.url.params)
-    if (meta.payload) meta.payload = JSON.stringify(meta.payload)
+    if (meta.payload) {
+      Object.keys(meta.payload).forEach(k => {
+        if (k.indexOf('file') > -1) {
+          if (Buffer.isBuffer(meta.payload[k]._data)) {
+            delete meta.payload[k]
+          }
+        }
+      })
+      meta.payload = JSON.stringify(meta.payload)
+    }
   }
   if (meta.authentication) meta.authentication.credentials = JSON.stringify(meta.authentication.credentials)
   return meta
