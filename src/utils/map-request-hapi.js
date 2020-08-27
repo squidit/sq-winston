@@ -35,7 +35,7 @@ function stringifyFields (meta) {
     if (meta.payload) {
       Object.keys(meta.payload).forEach(k => {
         if (k.indexOf('file') > -1) {
-          if (Buffer.isBuffer(meta.payload[k]._data)) {
+          if (meta.payload[k] && meta.payload[k]._data && Buffer.isBuffer(meta.payload[k]._data)) {
             delete meta.payload[k]
           }
         }
