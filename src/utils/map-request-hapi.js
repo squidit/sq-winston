@@ -34,10 +34,8 @@ function stringifyFields (meta) {
     if (meta.url.params) meta.url.params = JSON.stringify(meta.url.params)
     if (meta.payload) {
       Object.keys(meta.payload).forEach(k => {
-        if (k.indexOf('file') > -1) {
-          if (meta.payload[k] && meta.payload[k]._data && Buffer.isBuffer(meta.payload[k]._data)) {
-            delete meta.payload[k]
-          }
+        if ((k.indexOf('file') > -1 && Buffer.isBuffer(meta.payload[k]._data)) || /^data:(?=.*base64).*/.test(meta.payload[k])) {
+          delete meta.payload[k]
         }
       })
       meta.payload = JSON.stringify(meta.payload)
