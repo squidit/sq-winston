@@ -10,11 +10,12 @@
   "author": "Breno Panzolini <breno.panzolini@squidit.com.br>",
   "license": "ISC",
   "dependencies": {
+    "elastic-apm-node": "^3.16.0",
     "elasticsearch": "^15.1.1",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "shortid": "^2.2.13",
     "winston": "^3.1.0",
-    "winston-elasticsearch": "^0.7.5"
+    "winston-elasticsearch": "^0.15.6"
   }
 }

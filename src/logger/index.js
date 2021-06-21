@@ -3,10 +3,33 @@ const { get } = require('lodash')
 const { mapStep } = require('../utils/map-step')
 const { mapRequest } = require('sq-winston/src/utils/map-request-hapi')
 const shortid = require('shortid')
+const apm = require('elastic-apm-node')
+
+function setupAPM () {
+  const {
+    EAPM_SECRET_TOKEN,
+    EAPM_SERVER_URL
+  } = process.env
+
+  if (EAPM_SECRET_TOKEN && EAPM_SERVER_URL) {
+    if (!apm.isStarted()) {
+      //  Setup APM
+      apm.start({
+        secretToken: process.env.EAPM_SECRET_TOKEN,
+        serverUrl: process.env.EAPM_SERVER_URL,
+        active: process.env.NODE_ENV === 'production'
+      })
+    }
+  }
+}
+
+//  Setup APM
+setupAPM()
+
 const {
   elasticTransport,
   elasticTransportImpersonate
- } = require('./transports/elastic.transport')
+} = require('./transports/elastic.transport')
 
 const key = 'sq-traceId'
 
@@ -28,6 +51,8 @@ const logger = createLogger({
 const loggerImpersonate = createLogger({
   transports: getTransports('impersonate')
 })
+
+
 
 /**
  * Classe com funções estáticas para realizar o log

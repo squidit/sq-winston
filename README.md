@@ -84,3 +84,14 @@ const options = { } // [[Objeto com os parâmetros do *log*]]
 const data = { } // [[Objeto com os qualquer dado a ser stringficado]]
 const traceId = logger.step(message, data, options) // a resposta do logger devolve uma hash de rastreamento
 ```
+
+
+## APM
+Para configurar o APM é necessário as envs citada abaixo,
+para recuperar o apm na aplicação, use `require('sq-winston').apm` 
+> O APM envia informações apenas para `NODE_ENV=production`
+
+### Envs
+- EAPM_SECRET_TOKEN : Token de autenticação
+- EAPM_SERVER_URL: URL do servidor APM
+- ELASTIC_APM_CAPTURE_BODY (Optional): [Veja Documentação](https://www.elastic.co/guide/en/apm/agent/nodejs/current/configuration.html#capture-body)
