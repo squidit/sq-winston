@@ -1,10 +1,11 @@
 const path = require('path')
-const WinstonES = require('winston-elasticsearch')
+const {ElasticsearchTransport: WinstonES} = require('winston-elasticsearch')
 const elasticsearch = require('elasticsearch')
 const moment = require('moment')
 const { stringifyFields, hideProtectedField } = require('../../utils/map-request-hapi')
 const { get, omit } = require('lodash')
 const { ELASTIC_LOG_INDEX_PREFIX, ELASTIC_LOG_PASSWORD, ELASTIC_LOG_URL, ELASTIC_LOG_USER, NODE_ENV } = process.env
+const apm = require('elastic-apm-node')
 
 function getOptions (meta) {
   return ({
@@ -39,10 +40,14 @@ const transformer = (log) => {
 
 function getESOptions () {
   const options = {
-    host: ELASTIC_LOG_URL
+    node: ELASTIC_LOG_URL
   }
   if (ELASTIC_LOG_USER && ELASTIC_LOG_PASSWORD) {
-    options.httpAuth = `${ELASTIC_LOG_USER}:${ELASTIC_LOG_PASSWORD}`
+    options.auth = {
+      username: ELASTIC_LOG_USER,
+      password: ELASTIC_LOG_PASSWORD
+    }
+    // `${ELASTIC_LOG_USER}:${}`
   }
 
   return options
@@ -50,14 +55,16 @@ function getESOptions () {
 
 const elasticTransport = ELASTIC_LOG_URL
   ? new WinstonES({
-    client: new elasticsearch.Client(getESOptions()),
+    apm,
+    clientOpts: getESOptions(),
     transformer,
-    indexPrefix: ELASTIC_LOG_INDEX_PREFIX ? ELASTIC_LOG_INDEX_PREFIX : 'logs'
+    indexPrefix: ELASTIC_LOG_INDEX_PREFIX || 'logs'
   })
   : null
 
 const elasticTransportImpersonate = ELASTIC_LOG_URL
   ? new WinstonES({
+    apm,
     client: new elasticsearch.Client(getESOptions()),
     transformer,
     indexPrefix: 'impersonate'

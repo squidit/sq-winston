@@ -2,6 +2,7 @@ const shortid = require('shortid')
 const Logger = require('../logger')
 const moment = require('moment')
 const { mapRequest } = require('sq-winston/src/utils/map-request-hapi')
+const apm = require('elastic-apm-node')
 
 const key = 'sq-traceId'
 
