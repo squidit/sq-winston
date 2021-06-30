@@ -48,19 +48,25 @@ function getESOptions () {
   return options
 }
 
-const elasticTransport = ELASTIC_LOG_URL
-  ? new WinstonES({
+let elasticTransport = null
+if (ELASTIC_LOG_URL) {
+  const opts = {
     client: new elasticsearch.Client(getESOptions()),
-    transformer,
-    indexPrefix: ELASTIC_LOG_INDEX_PREFIX ? ELASTIC_LOG_INDEX_PREFIX : 'logs'
-  })
-  : null
+    transformer
+  }
+  if (ELASTIC_LOG_INDEX_PREFIX && ELASTIC_LOG_INDEX_PREFIX.includes('payments')) {
+    opts.index = ELASTIC_LOG_INDEX_PREFIX
+  }
+
+  elasticTransport = new WinstonES(opts)
+}
+
 
 const elasticTransportImpersonate = ELASTIC_LOG_URL
   ? new WinstonES({
     client: new elasticsearch.Client(getESOptions()),
     transformer,
-    indexPrefix: 'impersonate'
+    index: 'impersonate'
   })
   : null
 
