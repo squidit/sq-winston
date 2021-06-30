@@ -1,6 +1,6 @@
 {
   "name": "sq-winston",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Lib de log focada em Elasticsearch + Kibana",
   "main": "index.js",
   "scripts": {
