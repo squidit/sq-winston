@@ -56,6 +56,8 @@ if (ELASTIC_LOG_URL) {
   }
   if (ELASTIC_LOG_INDEX_PREFIX && ELASTIC_LOG_INDEX_PREFIX.includes('payments')) {
     opts.index = ELASTIC_LOG_INDEX_PREFIX
+  } else {
+    opts.indexPrefix = ELASTIC_LOG_INDEX_PREFIX ? ELASTIC_LOG_INDEX_PREFIX : 'logs'
   }
 
   elasticTransport = new WinstonES(opts)
