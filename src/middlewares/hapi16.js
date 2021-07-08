@@ -2,11 +2,13 @@ const shortid = require('shortid')
 const Logger = require('../logger')
 const moment = require('moment')
 const { mapRequest } = require('sq-winston/src/utils/map-request-hapi')
+const apm = require('elastic-apm-node')
 
 const key = 'sq-traceId'
 
 const plugin = function (server, options, next) {
   server.ext('onRequest', (request, reply) => {
+    if (request.payload) apm.setUserContext(request.payload)
     // Gera um identificador único para o request
     if (!request.headers[key]) request.headers[key] = shortid.generate()
 

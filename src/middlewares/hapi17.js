@@ -2,43 +2,45 @@ const shortid = require('shortid')
 const Logger = require('../logger')
 const moment = require('moment')
 const { mapRequest } = require('sq-winston/src/utils/map-request-hapi')
+const apm = require('elastic-apm-node')
 
 const key = 'sq-traceId'
 
 const plugin = {
   register: (server, options, next) => {
-  server.ext('onRequest', (request, reply) => {
-    // Gera um identificador único para o request
-    if (!request.headers[key]) request.headers[key] = shortid.generate()
+    server.ext('onRequest', (request, reply) => {
+      if (request.payload) apm.setUserContext(request.payload)
+      // Gera um identificador único para o request
+      if (!request.headers[key]) request.headers[key] = shortid.generate()
 
-    // Adiciona no context do request um objeto com as propriedades para log
-    request.meta = mapRequest(request, key)
-    request.meta.begin = moment.utc()
+      // Adiciona no context do request um objeto com as propriedades para log
+      request.meta = mapRequest(request, key)
+      request.meta.begin = moment.utc()
 
-    return reply.continue
-  })
+      return reply.continue
+    })
 
-  server.ext('onPostAuth', (request, reply) => {
-    request.meta = mapRequest(request, key, request.meta)
+    server.ext('onPostAuth', (request, reply) => {
+      request.meta = mapRequest(request, key, request.meta)
 
-    return reply.continue
-  })
+      return reply.continue
+    })
 
-  server.ext('onPreResponse', (request, reply) => {
-    request.meta = mapRequest(request, key)
-    // Recupera o header do response para enviar o traceId
-    const headers = request.response instanceof Error ? request.response.output.headers : request.response.headers
-    headers[key] = request.headers[key]
+    server.ext('onPreResponse', (request, reply) => {
+      request.meta = mapRequest(request, key)
+      // Recupera o header do response para enviar o traceId
+      const headers = request.response instanceof Error ? request.response.output.headers : request.response.headers
+      headers[key] = request.headers[key]
 
-    // Adiciona as propriedades do request
-    request.meta.end = moment.utc()
-    request.meta.duration = request.meta.end - request.meta.begin
+      // Adiciona as propriedades do request
+      request.meta.end = moment.utc()
+      request.meta.duration = request.meta.end - request.meta.begin
 
-    // Adiciona os metas do log
-    const meta = {
-      type: 'http',
-      ...request.meta
-    }
+      // Adiciona os metas do log
+      const meta = {
+        type: 'http',
+        ...request.meta
+      }
 
     // Verifica se ocorreu erro no request para adicionar os respctivos metas
     let logFn = null
@@ -66,8 +68,7 @@ const plugin = {
     logFn(meta.error || 'Success', meta)
 
     return reply.continue
-  })
-
+    })
     next
   },
   name: 'sq-winston',
