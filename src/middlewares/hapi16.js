@@ -8,7 +8,6 @@ const key = 'sq-traceId'
 
 const plugin = function (server, options, next) {
   server.ext('onRequest', (request, reply) => {
-    if (request.payload) apm.setUserContext(request.payload)
     // Gera um identificador único para o request
     if (!request.headers[key]) request.headers[key] = shortid.generate()
 
@@ -26,44 +25,26 @@ const plugin = function (server, options, next) {
   })
 
   server.ext('onPreResponse', (request, reply) => {
-    // Recupera o header do response para enviar o traceId
-    const headers = request.response instanceof Error ? request.response.output.headers : request.response.headers
-    headers[key] = request.headers[key]
-
-    // Adiciona as propriedades do request
-    request.meta.end = moment.utc()
-    request.meta.duration = request.meta.end - request.meta.begin
-
-    // Adiciona os metas do log
-    const meta = {
-      type: 'http',
-      ...request.meta
+    const apmHeaders = {}
+    const currentTransaction = apm.currentTransaction
+    if (currentTransaction) {
+      apmHeaders['trace.id'] = currentTransaction.traceId
+      apmHeaders['transaction.id'] = currentTransaction.id
+    }
+    request.headers = {
+      ...request.headers,
+      ...apmHeaders
     }
 
-    // Verifica se ocorreu erro no request para adicionar os respctivos metas
-    let logFn = null
-    meta.status = request.response.statusCode
-      ? request.response.statusCode
-      : (request.response.output ? request.response.output.statusCode : 599)
-    if (request.response instanceof Error ||
-      !!request.response.stack ||
-      meta.status >= 400) {
-      logFn = Logger.error
-      meta.error = typeof request.response.message === 'string'
-        ? request.response.message
-        : request.response.source ? JSON.stringify(request.response.source) : 'No message available'
-      meta.stack = typeof request.response.stack === 'string'
-        ? request.response.stack
-        : (request.response.source && request.response.source.stack ? request.response.source.stack : 'No stack available')
-        meta.details = typeof request.response.details === 'string'
-          ? request.response.details
-          : request.response.details ? JSON.stringify(request.response.details) : 'No message available'
-    } else {
-      logFn = Logger.info
+    if (request.payload && apm.isStarted()) {
+      apm.setCustomContext({
+        payload: request.payload
+      })
+      Logger.info('Info', {
+        ...apmHeaders,
+        payload: JSON.stringify(request.payload)
+      })
     }
-
-    // Cria de fato o registro de log
-    logFn(meta.error || 'Success', meta)
 
     return reply.continue()
   })
