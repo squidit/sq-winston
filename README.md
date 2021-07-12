@@ -87,6 +87,7 @@ const traceId = logger.step(message, data, options) // a resposta do logger devo
 
 # Envs APM
 As envs marcadas como **"*"** são **obrigatórias** e as demais são opcionais, para mais info ler a [Doc de Config APM](https://www.elastic.co/guide/en/apm/agent/nodejs/current/configuration.html) do Elastic
+Esses valores estão salvos nas [envs globais da organização Wercker](https://app.wercker.com/organizations/Squid/settings/envvars) 
 
 - EAPM_SERVER_URL*
   - Servidor APM
