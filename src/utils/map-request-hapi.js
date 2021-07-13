@@ -28,7 +28,7 @@ function mapRequest (request, key, meta = { url: {}, authentication: {} }) {
   })
 }
 
-function stringifyFields (meta) {
+function stringifyFields (meta, parseToString = true) {
   if (meta.url) {
     if (meta.url.query) meta.url.query = JSON.stringify(meta.url.query)
     if (meta.url.params) meta.url.params = JSON.stringify(meta.url.params)
@@ -43,7 +43,7 @@ function stringifyFields (meta) {
           }
         }
       })
-      meta.payload = JSON.stringify(meta.payload)
+      if (parseToString) meta.payload = JSON.stringify(meta.payload)
     }
   }
   if (meta.authentication) meta.authentication.credentials = JSON.stringify(meta.authentication.credentials)
