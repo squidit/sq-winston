@@ -19,7 +19,7 @@ $ npm install github:squidit/sq-winston
 
 ## Utilização
 
-Por default a lib utiliza os *transports* do Winston. Para que o log no ES seja salvo com b
+Por default a lib utiliza os *transports* do Winston. Para que o log no ES seja salvo com sucesso, é necessário exportar a variável de ambiente **ELASTIC_LOG_URL** antes de rodar o seu projeto.
 
 ```sh
 ELASTIC_LOG_URL=http://localhost:9200
