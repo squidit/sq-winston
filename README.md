@@ -84,3 +84,26 @@ const options = { } // [[Objeto com os parâmetros do *log*]]
 const data = { } // [[Objeto com os qualquer dado a ser stringficado]]
 const traceId = logger.step(message, data, options) // a resposta do logger devolve uma hash de rastreamento
 ```
+
+# Envs APM
+As envs marcadas como **"*"** são **obrigatórias** e as demais são opcionais, para mais info ler a [Doc de Config APM](https://www.elastic.co/guide/en/apm/agent/nodejs/current/configuration.html) do Elastic
+Esses valores estão salvos nas [envs globais da organização Wercker](https://app.wercker.com/organizations/Squid/settings/envvars) 
+
+- EAPM_SERVER_URL*
+  - Servidor APM
+- EAPM_SECRET_TOKEN*
+  - Token para o servidor APM
+- ELASTIC_APM_ACTIVE
+  - Define se os dados de APM serão enviados, default é se o NODE_ENV é production
+- ELASTIC_APM_CAPTURE_BODY
+  - Define se pega o body da request ( valido somente para Content-type url encoded )
+- ELASTIC_APM_ERROR_MESSAGE_MAX_LENGTH
+  - Define o tamanho maximo da msg
+- ELASTIC_APM_API_REQUEST_SIZE
+  - Define o tamanho maximo da msg
+- ELASTIC_APM_CAPTURE_HEADERS
+  - Define se deve guardar os headers de requests
+- ELASTIC_APM_FILTER_HTTP_HEADERS
+  - Define se dados sensiveis (como password, card) devem ser oculatado do header
+- ELASTIC_SANITIZE_FIELD_NAMES
+  - Quais os campos devem ser filtrados na hora de guardar (tanto do payload quanto do headers)

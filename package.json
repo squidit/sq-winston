@@ -1,6 +1,6 @@
 {
   "name": "sq-winston",
-  "version": "0.4.5",
+  "version": "1.0.0",
   "description": "Lib de log focada em Elasticsearch + Kibana",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,7 @@
   "author": "Breno Panzolini <breno.panzolini@squidit.com.br>",
   "license": "ISC",
   "dependencies": {
+    "elastic-apm-node": "^3.16.0",
     "elasticsearch": "^15.1.1",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",

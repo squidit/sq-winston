@@ -1,7 +1,8 @@
 const shortid = require('shortid')
 const Logger = require('../logger')
 const moment = require('moment')
-const { mapRequest } = require('sq-winston/src/utils/map-request-hapi')
+const { mapRequest, stringifyFields } = require('../utils/map-request-hapi')
+const apm = require('elastic-apm-node')
 
 const key = 'sq-traceId'
 
@@ -24,44 +25,29 @@ const plugin = function (server, options, next) {
   })
 
   server.ext('onPreResponse', (request, reply) => {
-    // Recupera o header do response para enviar o traceId
-    const headers = request.response instanceof Error ? request.response.output.headers : request.response.headers
-    headers[key] = request.headers[key]
-
-    // Adiciona as propriedades do request
-    request.meta.end = moment.utc()
-    request.meta.duration = request.meta.end - request.meta.begin
-
-    // Adiciona os metas do log
-    const meta = {
-      type: 'http',
-      ...request.meta
+    const apmHeaders = {}
+    const currentTransaction = apm.currentTransaction
+    if (currentTransaction) {
+      apmHeaders['trace.id'] = currentTransaction.traceId
+      apmHeaders['transaction.id'] = currentTransaction.id
+    }
+    if (!request.headers['trace.id'] && !request.headers['transaction.id']) {
+      request.headers = {
+        ...request.headers,
+        ...apmHeaders
+      }
     }
 
-    // Verifica se ocorreu erro no request para adicionar os respctivos metas
-    let logFn = null
-    meta.status = request.response.statusCode
-      ? request.response.statusCode
-      : (request.response.output ? request.response.output.statusCode : 599)
-    if (request.response instanceof Error ||
-      !!request.response.stack ||
-      meta.status >= 400) {
-      logFn = Logger.error
-      meta.error = typeof request.response.message === 'string'
-        ? request.response.message
-        : request.response.source ? JSON.stringify(request.response.source) : 'No message available'
-      meta.stack = typeof request.response.stack === 'string'
-        ? request.response.stack
-        : (request.response.source && request.response.source.stack ? request.response.source.stack : 'No stack available')
-        meta.details = typeof request.response.details === 'string'
-          ? request.response.details
-          : request.response.details ? JSON.stringify(request.response.details) : 'No message available'
-    } else {
-      logFn = Logger.info
+    if (request.payload && apm.isStarted()) {
+      const {payload} = stringifyFields({ url: true, payload: request.payload }, false)
+      apm.setCustomContext({
+        payload
+      })
+      Logger.info('Info', {
+        ...apmHeaders,
+        payload: JSON.stringify(payload)
+      })
     }
-
-    // Cria de fato o registro de log
-    logFn(meta.error || 'Success', meta)
 
     return reply.continue()
   })
