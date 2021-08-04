@@ -86,7 +86,7 @@ const plugin = {
       // Cria de fato o registro de log
       const {ELASTIC_LOG_INDEX_PREFIX} = process.env
       const isIndexPayments = ELASTIC_LOG_INDEX_PREFIX && ELASTIC_LOG_INDEX_PREFIX.includes('payments')
-      const isIndexImpersonate = ELASTIC_LOG_INDEX_PREFIX && ELASTIC_LOG_INDEX_PREFIX.includes('payments')
+      const isIndexImpersonate = ELASTIC_LOG_INDEX_PREFIX && ELASTIC_LOG_INDEX_PREFIX.includes('impersonate')
       if (isIndexImpersonate || isIndexPayments) {
         logFn(meta.error || 'Success', meta)
       }
