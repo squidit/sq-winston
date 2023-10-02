@@ -3,7 +3,7 @@ const hapi16 = require('./src/middlewares/hapi16')
 const hapi17 = require('./src/middlewares/hapi17')
 const apm = require('elastic-apm-node')
 
-function setupAPM () {
+function setupAPM (opts = {}) {
   const {
     EAPM_SECRET_TOKEN,
     EAPM_SERVER_URL
@@ -13,6 +13,7 @@ function setupAPM () {
   if (!apm.isStarted() && isAPMEnvSetted) {
     //  Config Optional Envs
     apm.start({
+      ...opts,
       secretToken: EAPM_SECRET_TOKEN,
       serverUrl: EAPM_SERVER_URL
     })
